@@ -1,0 +1,7 @@
+---
+# tasks file for saprouter_deployment
+
+- import_tasks: group.yml
+- import_tasks: source.yml
+- import_tasks: user.yml
+- import_tasks: saprouter.yml

@@ -1,0 +1,85 @@
+---
+## Prepare software source
+
+- name: Check state of host source directory '{{ saprouter_deployment_src_dir }}'
+  stat:
+    path: "{{ saprouter_deployment_src_dir }}"
+  register: __saprouter_deployment_file_registered
+  changed_when: false
+  check_mode: false
+
+- name: Ensure host source directory '{{ saprouter_deployment_src_dir }}' exists
+  file:
+    path: "{{ saprouter_deployment_src_dir }}"
+    state: directory
+    owner: root
+    group: sapsys
+    mode: '0775'
+  when: not __saprouter_deployment_file_registered.stat.exists
+
+- name: Ensure location original SAPCAR is determined
+  set_fact:
+    __saprouter_deployment_bundle_sapcar_local_dir: "{{ saprouter_deployment_bundle_sapcar_local_dir|default(saprouter_deployment_bundle_local_dir) }}"
+
+- name: Ensure archive filenames in host source directory are determined
+  set_fact:
+    __saprouter_deployment_source_sapcar_filename: "{{ saprouter_deployment_src_dir }}/SAPCAR"
+    __saprouter_deployment_source_saprouter_sar_filename: "{{ saprouter_deployment_src_dir }}/{{ saprouter_deployment_bundle_saprouter_sar_file }}"
+    __saprouter_deployment_source_sapcryptolib_sar_filename: "{{ saprouter_deployment_src_dir }}/{{ saprouter_deployment_bundle_sapcryptolib_sar_file }}"
+
+- name: Ensure SAPCAR utility is copied into host source directory from local folder
+  copy:
+    dest: "{{ __saprouter_deployment_source_sapcar_filename }}"
+    src: "{{ __saprouter_deployment_bundle_sapcar_local_dir }}/{{ saprouter_deployment_bundle_sapcar_file }}"
+    owner: root
+    group: sapsys
+    mode: '0775'
+    remote_src: false
+  when:
+    - __saprouter_deployment_bundle_sapcar_local_dir|default(None)
+    - __saprouter_deployment_bundle_sapcar_local_dir|length > 0
+
+- name: Ensure bundle archives are copied into host source directory from local folder
+  copy:
+    dest: "{{ item.dest_filename }}"
+    src: "{{ saprouter_deployment_bundle_local_dir }}/{{ item.src_file }}"
+    owner: root
+    group: sapsys
+    mode: '0775'
+    remote_src: false
+  when:
+    - saprouter_deployment_bundle_local_dir|default(None)
+    - saprouter_deployment_bundle_local_dir|length > 0
+  with_items:
+    - {src_file: "{{ saprouter_deployment_bundle_saprouter_sar_file }}", dest_filename: "{{ __saprouter_deployment_source_saprouter_sar_filename }}"}
+    - {src_file: "{{ saprouter_deployment_bundle_sapcryptolib_sar_file }}", dest_filename: "{{ __saprouter_deployment_source_sapcryptolib_sar_filename }}"}
+
+- name: Ensure SAPCAR utility is copied into host source directory from host folder
+  copy:
+    dest: "{{ item.dest_filename }}"
+    src: "{{ saprouter_deployment_bundle_remote_dir }}/{{ item.src_file }}"
+    owner: root
+    group: sapsys
+    mode: '0775'
+    remote_src: true
+  when:
+    - saprouter_deployment_bundle_remote_dir|default(None)
+    - saprouter_deployment_bundle_remote_dir|length > 0
+  with_items:
+    - {src_file: "{{ saprouter_deployment_bundle_saprouter_sar_file }}", dest_filename: "{{ __saprouter_deployment_source_saprouter_sar_filename }}"}
+    - {src_file: "{{ saprouter_deployment_bundle_sapcryptolib_sar_file }}", dest_filename: "{{ __saprouter_deployment_source_sapcryptolib_sar_filename }}"}
+
+- name: Ensure host source directory for SAProuter '{{ saprouter_deployment_sid }}' is prepared
+  stat:
+    path: "{{ item }}"
+  register: __saprouter_deployment_file_registered
+  failed_when: not __saprouter_deployment_file_registered.stat.exists
+  with_items:
+    - "{{ __saprouter_deployment_source_sapcar_filename }}"
+    - "{{ __saprouter_deployment_source_saprouter_sar_filename }}"
+    - "{{ __saprouter_deployment_source_sapcryptolib_sar_filename }}"
+
+- name: Ensure SAPCAR utility is functional
+  command: "{{ __saprouter_deployment_source_sapcar_filename }} --version"
+  changed_when: false
+  check_mode: false
