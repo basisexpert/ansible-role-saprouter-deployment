@@ -2,6 +2,6 @@
 ## Prepare group 'sapsys'
 
 - name: Ensure group 'sapsys' exists
-  group:
+  ansible.builtin.group:
     name: sapsys
-    gid: "{{ saprouter_deployment_group_sapsys_gid|default(omit) }}"
+    gid: "{{ saprouter_deployment_group_sapsys_gid | default(omit) }}"

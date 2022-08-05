@@ -1,0 +1,12 @@
+#!/bin/bash
+
+__SAPROUTER_OPT="$SAPROUTER_OPT \
+    -r \
+    -S 32{{ saprouter_deployment_instance_number }} \
+    -R {{ saprouter_deployment_global_profile_dir }}/SAPROUTTAB \
+    -G {{ saprouter_deployment_instance_work_dir }}/saprouter.log \
+    -T {{ saprouter_deployment_instance_work_dir }}/dev_rout -D"
+
+[[ -n "${MYSNCDN}" ]] && \
+    ( cd {{ saprouter_deployment_instance_work_dir }} && {{ saprouter_deployment_global_exe_dir }}/saprouter $__SAPROUTER_OPT -K "p:${MYSNCDN}" & ) || \
+    ( cd {{ saprouter_deployment_instance_work_dir }} && {{ saprouter_deployment_global_exe_dir }}/saprouter $__SAPROUTER_OPT & )
