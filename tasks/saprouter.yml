@@ -1,0 +1,66 @@
+---
+## Prepare SAProuter instance
+
+- name: Ensure SAProuter '{{ saprouter_deployment_sid }}' folders structure is prepared
+  ansible.builtin.file:
+    state: directory
+    name: "{{ item }}"
+    owner: "{{ saprouter_deployment_user_name }}"
+    group: sapsys
+    mode: '0755'
+  with_items:
+    - "{{ saprouter_deployment_saprouter_dir }}"
+    - "{{ saprouter_deployment_global_dir }}"
+    - "{{ saprouter_deployment_global_exe_dir }}"
+    - "{{ saprouter_deployment_global_profile_dir }}"
+    - "{{ saprouter_deployment_instance_dir }}"
+    - "{{ saprouter_deployment_instance_work_dir }}"
+    - "{{ saprouter_deployment_instance_sec_dir }}"
+
+- name: Prepare temp directory to extract saprouter bundle archive
+  ansible.builtin.tempfile:
+    state: directory
+  register: __saprouter_deployment_bundle_saprouter_files
+
+- name: Prepare temp directory to extract sapcryptolib bundle archive
+  ansible.builtin.tempfile:
+    state: directory
+  register: __saprouter_deployment_bundle_sapcryptolib_files
+
+- name: Extract saprouter bundle archives into temp directories
+  ansible.builtin.command:
+    cmd: >
+      {{ __saprouter_deployment_source_sapcar_filename }}
+      -xvf {{ item.sar_filename }}
+      -R {{ item.dest_dir }}
+  changed_when: true
+  with_items:
+    - sar_filename: "{{ __saprouter_deployment_source_saprouter_sar_filename }}"
+      dest_dir: "{{ __saprouter_deployment_bundle_saprouter_files.path }}"
+    - sar_filename: "{{ __saprouter_deployment_source_sapcryptolib_sar_filename }}"
+      dest_dir: "{{ __saprouter_deployment_bundle_sapcryptolib_files.path }}"
+
+- name: Ensure saprouter executables are up-to-date
+  ansible.builtin.copy:
+    src: "{{ item }}/"
+    dest: "{{ saprouter_deployment_global_exe_dir }}"
+    owner: "{{ saprouter_deployment_user_name }}"
+    group: sapsys
+    mode: '0755'
+    remote_src: true
+  with_items:
+    - "{{ __saprouter_deployment_bundle_saprouter_files.path }}"
+    - "{{ __saprouter_deployment_bundle_sapcryptolib_files.path }}"
+
+- name: Ensure  SAProuter start/stop scripts prepared
+  ansible.builtin.template:
+    src: "{{ item.template }}"
+    dest: "{{ saprouter_deployment_global_exe_dir }}/{{ item.name }}"
+    owner: "{{ saprouter_deployment_user_name }}"
+    group: sapsys
+    mode: '0755'
+  with_items:
+    - template: "{{ saprouter_start_script_template }}"
+      name: startsaprouter.sh
+    - template: "{{ saprouter_stop_script_template }}"
+      name: stopsaprouter.sh

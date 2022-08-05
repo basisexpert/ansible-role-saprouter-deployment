@@ -1,0 +1,46 @@
+---
+## Prepare SAProuter instance's user
+
+- name: Ensure SAProuter administrator user '{{ saprouter_deployment_user_name }}' exists
+  ansible.builtin.user:
+    name: "{{ saprouter_deployment_user_name }}"
+    uid: "{{ saprouter_deployment_user_uid | default(omit) }}"
+    group: sapsys
+    shell: "{{ saprouter_deployment_user_shell }}"
+    comment: "SAP System Administrator"
+
+- name: Ensure SAProuter administrator user environment script is prepared
+  ansible.builtin.blockinfile:
+    name: "/home/{{ saprouter_deployment_user_name }}/.sapenv.sh"
+    content: |
+      SAPSYSTEMNAME={{ saprouter_deployment_sid }}; export SAPSYSTEMNAME
+      SECUDIR={{ saprouter_deployment_instance_sec_dir }}; export SECUDIR
+      SNC_LIB={{ saprouter_deployment_instance_sec_dir }}/libsapcrypto.so; export SNC_LIB
+      PATH=$PATH:{{ saprouter_deployment_global_exe_dir }}; export PATH
+      LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:{{ saprouter_deployment_global_exe_dir }}; export LD_LIBRARY_PATH
+      alias cdexe='cd {{ saprouter_deployment_global_exe_dir }}'
+      alias cdpro='cd {{ saprouter_deployment_global_profile_dir }}'
+      alias cdsec='cd {{ saprouter_deployment_instance_sec_dir }}'
+      alias cdwork='cd {{ saprouter_deployment_instance_work_dir }}'
+      alias startsap='{{ saprouter_deployment_global_exe_dir }}/startsaprouter.sh'
+      alias stopsap='{{ saprouter_deployment_global_exe_dir }}/stopsaprouter.sh'
+    marker: "# {mark} ANSIBLE MANAGED BLOCK, SAProuter {{ saprouter_deployment_sid }} environment"
+    create: true
+    owner: "{{ saprouter_deployment_user_name }}"
+    group: sapsys
+    mode: '0644'
+
+- name: Ensure SAProuter administrator user environment script is sourced in .bash_profile
+  ansible.builtin.blockinfile:
+    name: "/home/{{ saprouter_deployment_user_name }}/.bash_profile"
+    content: >
+      if [ -f $HOME/.sapenv_`hostname`.sh ]; then
+          . $HOME/.sapenv_`hostname`.sh
+      elif [ -f $HOME/.sapenv.sh ]; then
+          . $HOME/.sapenv.sh
+      fi
+    marker: "# {mark} ANSIBLE MANAGED BLOCK, SAProuter {{ saprouter_deployment_sid }} environment"
+    create: true
+    owner: "{{ saprouter_deployment_user_name }}"
+    group: sapsys
+    mode: '0644'

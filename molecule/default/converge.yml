@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include mprusov.saprouter_deployment"
+      include_role:
+        name: "mprusov.saprouter_deployment"
