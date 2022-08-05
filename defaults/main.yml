@@ -1,16 +1,16 @@
 ---
-# defaults file for saprouter_deployment
+# Defaults for saprouter_deployment
 
 ## Location of original utility SAPCAR
 # saprouter_deployment_bundle_sapcar_local_dir:
 # saprouter_deployment_bundle_sapcar_remote_dir:
-saprouter_deployment_bundle_sapcar_file: SAPCAR_1115-70006178.EXE
+# saprouter_deployment_bundle_sapcar_file: SAPCAR_1115-70006178.EXE
 
 ## Location of original archives for SAProuter deployment
-saprouter_deployment_bundle_local_dir: files/saprouter_deployment_bundle
+# saprouter_deployment_bundle_local_dir: files/saprouter_deployment_bundle
 # saprouter_deployment_bundle_remote_dir:
-saprouter_deployment_bundle_saprouter_sar_file: saprouter_1011-80003478.sar
-saprouter_deployment_bundle_sapcryptolib_sar_file: SAPCRYPTOLIBP_8544-20011697.SAR
+# saprouter_deployment_bundle_saprouter_sar_file: saprouter_1011-80003478.sar
+# saprouter_deployment_bundle_sapcryptolib_sar_file: SAPCRYPTOLIBP_8544-20011697.SAR
 
 ## SAProuter deployment parameters
 saprouter_deployment_sid: R99
@@ -30,7 +30,7 @@ saprouter_stop_script_template: stopsaprouter.sh.j2
 ## SAProuter SAPROUTTAB template
 saprouter_saprouttab_template: SAPROUTTAB.any.j2
 
-##
+## Calculated variables
 saprouter_deployment_saprouter_dir: "/usr/sap/{{ saprouter_deployment_sid }}"
 saprouter_deployment_global_dir: "{{ saprouter_deployment_saprouter_dir }}/SYS"
 saprouter_deployment_global_exe_dir: "{{ saprouter_deployment_global_dir }}/exe/run"

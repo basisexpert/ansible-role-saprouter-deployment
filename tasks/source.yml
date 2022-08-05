@@ -17,11 +17,6 @@
     mode: '0775'
   when: not __saprouter_deployment_file_registered.stat.exists
 
-- name: Ensure location original SAPCAR is determined
-  ansible.builtin.set_fact:
-    __saprouter_deployment_bundle_sapcar_local_dir:
-      "{{ saprouter_deployment_bundle_sapcar_local_dir | default(saprouter_deployment_bundle_local_dir) }}"
-
 - name: Ensure archive filenames in host source directory are determined
   ansible.builtin.set_fact:
     __saprouter_deployment_source_sapcar_filename: "{{ saprouter_deployment_src_dir }}/SAPCAR"
@@ -30,46 +25,62 @@
     __saprouter_deployment_source_sapcryptolib_sar_filename:
       "{{ saprouter_deployment_src_dir }}/{{ saprouter_deployment_bundle_sapcryptolib_sar_file }}"
 
-- name: Ensure SAPCAR utility is copied into host source directory from local folder
+- name: Ensure location original SAPCAR is determined (local)
+  ansible.builtin.set_fact:
+    __saprouter_deployment_bundle_sapcar_remote_src: false
+    __saprouter_deployment_bundle_sapcar_dir:
+      "{{ saprouter_deployment_bundle_sapcar_local_dir | default(saprouter_deployment_bundle_local_dir) }}"
+  when:
+    - saprouter_deployment_bundle_sapcar_remote_dir is not defined
+    - saprouter_deployment_bundle_sapcar_local_dir is defined or saprouter_deployment_bundle_local_dir is defined
+
+- name: Ensure location original SAPCAR is determined (remote)
+  ansible.builtin.set_fact:
+    __saprouter_deployment_bundle_sapcar_remote_src: true
+    __saprouter_deployment_bundle_sapcar_dir:
+      "{{ saprouter_deployment_bundle_sapcar_remote_dir | default(saprouter_deployment_bundle_remote_dir) }}"
+  when:
+    - saprouter_deployment_bundle_sapcar_local_dir is not defined
+    - saprouter_deployment_bundle_sapcar_remote_dir is defined or saprouter_deployment_bundle_remote_dir is defined
+
+- name: Ensure SAPCAR utility is copied into host source directory
   ansible.builtin.copy:
     dest: "{{ __saprouter_deployment_source_sapcar_filename }}"
-    src: "{{ __saprouter_deployment_bundle_sapcar_local_dir }}/{{ saprouter_deployment_bundle_sapcar_file }}"
+    src: "{{ __saprouter_deployment_bundle_sapcar_dir }}/{{ saprouter_deployment_bundle_sapcar_file }}"
     owner: root
     group: sapsys
     mode: '0775'
-    remote_src: false
-  when:
-    - __saprouter_deployment_bundle_sapcar_local_dir|default(None)
-    - __saprouter_deployment_bundle_sapcar_local_dir|length > 0
+    remote_src: "{{ __saprouter_deployment_bundle_sapcar_remote_src }}"
 
-- name: Ensure bundle archives are copied into host source directory from local folder
-  ansible.builtin.copy:
-    dest: "{{ item.dest_filename }}"
-    src: "{{ saprouter_deployment_bundle_local_dir }}/{{ item.src_file }}"
-    owner: root
-    group: sapsys
-    mode: '0775'
-    remote_src: false
+- name: Ensure location bundle archives is determined (local)
+  ansible.builtin.set_fact:
+    __saprouter_deployment_bundle_remote_src: false
+    __saprouter_deployment_bundle_dir:
+      "{{ saprouter_deployment_bundle_local_dir }}"
   when:
     - saprouter_deployment_bundle_local_dir|default(None)
     - saprouter_deployment_bundle_local_dir|length > 0
-  with_items:
-    - src_file: "{{ saprouter_deployment_bundle_saprouter_sar_file }}"
-      dest_filename: "{{ __saprouter_deployment_source_saprouter_sar_filename }}"
-    - src_file: "{{ saprouter_deployment_bundle_sapcryptolib_sar_file }}"
-      dest_filename: "{{ __saprouter_deployment_source_sapcryptolib_sar_filename }}"
 
-- name: Ensure SAPCAR utility is copied into host source directory from host folder
-  ansible.builtin.copy:
-    dest: "{{ item.dest_filename }}"
-    src: "{{ saprouter_deployment_bundle_remote_dir }}/{{ item.src_file }}"
-    owner: root
-    group: sapsys
-    mode: '0775'
-    remote_src: true
+- name: Ensure location bundle archives is determined (remote)
+  ansible.builtin.set_fact:
+    __saprouter_deployment_bundle_remote_src: true
+    __saprouter_deployment_bundle_dir:
+      "{{ saprouter_deployment_bundle_remote_dir }}"
   when:
     - saprouter_deployment_bundle_remote_dir|default(None)
     - saprouter_deployment_bundle_remote_dir|length > 0
+
+- name: Ensure bundle archives are copied into host source directory
+  ansible.builtin.copy:
+    dest: "{{ item.dest_filename }}"
+    src: "{{ __saprouter_deployment_bundle_dir }}/{{ item.src_file }}"
+    owner: root
+    group: sapsys
+    mode: '0775'
+    remote_src: "{{ __saprouter_deployment_bundle_remote_src }}"
+  when:
+    - saprouter_deployment_bundle_local_dir|default(None)
+    - saprouter_deployment_bundle_local_dir|length > 0
   with_items:
     - src_file: "{{ saprouter_deployment_bundle_saprouter_sar_file }}"
       dest_filename: "{{ __saprouter_deployment_source_saprouter_sar_filename }}"

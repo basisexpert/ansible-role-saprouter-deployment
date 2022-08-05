@@ -22,35 +22,25 @@
     state: directory
   register: __saprouter_deployment_bundle_saprouter_files
 
-- name: Prepare temp directory to extract sapcryptolib bundle archive
-  ansible.builtin.tempfile:
-    state: directory
-  register: __saprouter_deployment_bundle_sapcryptolib_files
-
 - name: Extract saprouter bundle archives into temp directories
   ansible.builtin.command:
     cmd: >
       {{ __saprouter_deployment_source_sapcar_filename }}
-      -xvf {{ item.sar_filename }}
-      -R {{ item.dest_dir }}
+      -xvf {{ item }}
+      -R {{ __saprouter_deployment_bundle_saprouter_files.path }}
   changed_when: true
   with_items:
-    - sar_filename: "{{ __saprouter_deployment_source_saprouter_sar_filename }}"
-      dest_dir: "{{ __saprouter_deployment_bundle_saprouter_files.path }}"
-    - sar_filename: "{{ __saprouter_deployment_source_sapcryptolib_sar_filename }}"
-      dest_dir: "{{ __saprouter_deployment_bundle_sapcryptolib_files.path }}"
+    - "{{ __saprouter_deployment_source_saprouter_sar_filename }}"
+    - "{{ __saprouter_deployment_source_sapcryptolib_sar_filename }}"
 
 - name: Ensure saprouter executables are up-to-date
   ansible.builtin.copy:
-    src: "{{ item }}/"
+    src: "{{ __saprouter_deployment_bundle_saprouter_files.path }}/"
     dest: "{{ saprouter_deployment_global_exe_dir }}"
     owner: "{{ saprouter_deployment_user_name }}"
     group: sapsys
     mode: '0755'
     remote_src: true
-  with_items:
-    - "{{ __saprouter_deployment_bundle_saprouter_files.path }}"
-    - "{{ __saprouter_deployment_bundle_sapcryptolib_files.path }}"
 
 - name: Ensure  SAProuter start/stop scripts prepared
   ansible.builtin.template:
