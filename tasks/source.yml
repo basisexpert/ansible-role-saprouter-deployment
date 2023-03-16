@@ -58,8 +58,7 @@
     __saprouter_deployment_bundle_dir:
       "{{ saprouter_deployment_bundle_local_dir }}"
   when:
-    - saprouter_deployment_bundle_local_dir|default(None)
-    - saprouter_deployment_bundle_local_dir|length > 0
+    - saprouter_deployment_bundle_local_dir | d('') | length > 0
 
 - name: Ensure location bundle archives is determined (remote)
   ansible.builtin.set_fact:
@@ -67,8 +66,7 @@
     __saprouter_deployment_bundle_dir:
       "{{ saprouter_deployment_bundle_remote_dir }}"
   when:
-    - saprouter_deployment_bundle_remote_dir|default(None)
-    - saprouter_deployment_bundle_remote_dir|length > 0
+    - saprouter_deployment_bundle_remote_dir| d('') | length > 0
 
 - name: Ensure bundle archives are copied into host source directory
   ansible.builtin.copy:
@@ -79,8 +77,7 @@
     mode: '0775'
     remote_src: "{{ __saprouter_deployment_bundle_remote_src }}"
   when:
-    - saprouter_deployment_bundle_local_dir|default(None)
-    - saprouter_deployment_bundle_local_dir|length > 0
+    - __saprouter_deployment_bundle_dir | d('') | length > 0
   with_items:
     - src_file: "{{ saprouter_deployment_bundle_saprouter_sar_file }}"
       dest_filename: "{{ __saprouter_deployment_source_saprouter_sar_filename }}"
