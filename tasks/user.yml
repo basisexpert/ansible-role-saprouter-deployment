@@ -1,7 +1,7 @@
 ---
 ## Prepare SAProuter instance's user
 
-- name: Ensure SAProuter administrator user '{{ saprouter_deployment_user_name }}' exists
+- name: Ensure SAProuter administrator OS user exists - {{ saprouter_deployment_user_name }}
   ansible.builtin.user:
     name: "{{ saprouter_deployment_user_name }}"
     uid: "{{ saprouter_deployment_user_uid | default(omit) }}"
