@@ -2,30 +2,15 @@ ansible-role-saprouter-deployment
 ===
 
 ```yml
-- name: Ensure SAProuter is deployed
+- name: Ensure SAProuter instance is deployed
   vars:
     saprouter_deployment_bundle_local_dir: files/saprouter_deployment_bundle
-    saprouter_deployment_bundle_sapcar_file: SAPCAR_1115-70006178.EXE
     saprouter_deployment_bundle_saprouter_sar_file: saprouter_1011-80003478.sar
     saprouter_deployment_bundle_sapcryptolib_sar_file: SAPCRYPTOLIBP_8544-20011697.SAR
-  include_role:
-  name: "mprusov.saprouter_deployment"
+    saprouter_deployment_bundle_sapcar_file: SAPCAR_1115-70006178.EXE
+  import_role:
+    name: "mprusov.saprouter_deployment"
 ```
-
-Location of original utility SAPCAR
----
-
-The SAPCAR utility is used to unarchive SAProuter (and other) SAP archives.
-
-| Variable | Description | Default |
-| --- | --- | --- |
-| saprouter_deployment_bundle_sapcar_local_dir  | | none |
-| saprouter_deployment_bundle_sapcar_remote_dir | | none |
-| saprouter_deployment_bundle_sapcar_file       | | SAPCAR_1115-70006178.EXE |
-
-Variables `saprouter_deployment_bundle_sapcar_local_dir` and `saprouter_deployment_bundle_sapcar_remote_dir` are mutually exclusive.
-If SAPCAR folder is not set then location of original archives for SAProuter will be used
-(`saprouter_deployment_bundle_local_dir`/`saprouter_deployment_bundle_remote_dir`).
 
 Location of original archives for SAProuter deployment
 ---
@@ -68,3 +53,18 @@ SAProuter SAPROUTTAB template
 | Variable | Description | Default |
 | --- | --- | --- |
 | saprouter_saprouttab_template | | SAPROUTTAB.any.j2 |
+
+Location of original utility SAPCAR
+---
+
+The SAPCAR utility is used to unarchive SAProuter (and other) SAP archives.
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| saprouter_deployment_sapcar_local_dir  | | none |
+| saprouter_deployment_sapcar_remote_dir | | none |
+| saprouter_deployment_bundle_sapcar_file       | | SAPCAR_1115-70006178.EXE |
+
+Variables `saprouter_deployment_sapcar_local_dir` and `saprouter_deployment_sapcar_remote_dir` are mutually exclusive.
+If SAPCAR location is not specified then location of original archives for SAProuter will be used
+(`saprouter_deployment_bundle_local_dir`/`saprouter_deployment_bundle_remote_dir`).

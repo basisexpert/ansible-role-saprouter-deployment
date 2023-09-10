@@ -2,8 +2,8 @@
 # Defaults for saprouter_deployment
 
 ## Location of original utility SAPCAR
-# saprouter_deployment_bundle_sapcar_local_dir:
-# saprouter_deployment_bundle_sapcar_remote_dir:
+# saprouter_deployment_sapcar_local_dir:
+# saprouter_deployment_sapcar_remote_dir:
 # saprouter_deployment_bundle_sapcar_file: SAPCAR_1115-70006178.EXE
 
 ## Location of original archives for SAProuter deployment
