@@ -1,14 +1,14 @@
 ---
-## Prepare software source
+## Prepare SAProuter software source
 
-- name: Check state of host source directory '{{ saprouter_deployment_src_dir }}'
+- name: Check state of host SAProuter source directory - {{ saprouter_deployment_src_dir }}
   ansible.builtin.stat:
     path: "{{ saprouter_deployment_src_dir }}"
   register: __saprouter_deployment_file_registered
   changed_when: false
   check_mode: false
 
-- name: Ensure host source directory '{{ saprouter_deployment_src_dir }}' exists
+- name: Ensure host SAProuter source directory exists - {{ saprouter_deployment_src_dir }}
   ansible.builtin.file:
     path: "{{ saprouter_deployment_src_dir }}"
     state: directory
@@ -17,7 +17,7 @@
     mode: '0775'
   when: not __saprouter_deployment_file_registered.stat.exists
 
-- name: Ensure archive filenames in host source directory are determined
+- name: Evaluate archive filenames in host SAProuter source directory are determined
   ansible.builtin.set_fact:
     __saprouter_deployment_source_sapcar_filename: "{{ saprouter_deployment_src_dir }}/SAPCAR"
     __saprouter_deployment_source_saprouter_sar_filename:
@@ -25,25 +25,25 @@
     __saprouter_deployment_source_sapcryptolib_sar_filename:
       "{{ saprouter_deployment_src_dir }}/{{ saprouter_deployment_bundle_sapcryptolib_sar_file }}"
 
-- name: Ensure location original SAPCAR is determined (local)
+- name: Ensure location of original SAPCAR is determined (local)
   ansible.builtin.set_fact:
     __saprouter_deployment_bundle_sapcar_remote_src: false
     __saprouter_deployment_bundle_sapcar_dir:
-      "{{ saprouter_deployment_bundle_sapcar_local_dir | default(saprouter_deployment_bundle_local_dir) }}"
+      "{{ saprouter_deployment_sapcar_local_dir | default(saprouter_deployment_bundle_local_dir) }}"
   when:
-    - saprouter_deployment_bundle_sapcar_remote_dir is not defined
-    - saprouter_deployment_bundle_sapcar_local_dir is defined or saprouter_deployment_bundle_local_dir is defined
+    - saprouter_deployment_sapcar_remote_dir is not defined
+    - saprouter_deployment_sapcar_local_dir is defined or saprouter_deployment_bundle_local_dir is defined
 
-- name: Ensure location original SAPCAR is determined (remote)
+- name: Ensure location of original SAPCAR is determined (remote)
   ansible.builtin.set_fact:
     __saprouter_deployment_bundle_sapcar_remote_src: true
     __saprouter_deployment_bundle_sapcar_dir:
-      "{{ saprouter_deployment_bundle_sapcar_remote_dir | default(saprouter_deployment_bundle_remote_dir) }}"
+      "{{ saprouter_deployment_sapcar_remote_dir | default(saprouter_deployment_bundle_remote_dir) }}"
   when:
-    - saprouter_deployment_bundle_sapcar_local_dir is not defined
-    - saprouter_deployment_bundle_sapcar_remote_dir is defined or saprouter_deployment_bundle_remote_dir is defined
+    - saprouter_deployment_sapcar_local_dir is not defined
+    - saprouter_deployment_sapcar_remote_dir is defined or saprouter_deployment_bundle_remote_dir is defined
 
-- name: Ensure SAPCAR utility is copied into host source directory
+- name: Ensure SAPCAR utility is copied into SAProuter host source directory
   ansible.builtin.copy:
     dest: "{{ __saprouter_deployment_source_sapcar_filename }}"
     src: "{{ __saprouter_deployment_bundle_sapcar_dir }}/{{ saprouter_deployment_bundle_sapcar_file }}"
@@ -84,7 +84,7 @@
     - src_file: "{{ saprouter_deployment_bundle_sapcryptolib_sar_file }}"
       dest_filename: "{{ __saprouter_deployment_source_sapcryptolib_sar_filename }}"
 
-- name: Ensure host source directory for SAProuter '{{ saprouter_deployment_sid }}' is prepared
+- name: Ensure host source directory of SAProuter is prepared - {{ saprouter_deployment_sid }}
   ansible.builtin.stat:
     path: "{{ item }}"
   register: __saprouter_deployment_file_registered

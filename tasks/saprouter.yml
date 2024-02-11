@@ -1,7 +1,7 @@
 ---
 ## Prepare SAProuter instance
 
-- name: Ensure SAProuter '{{ saprouter_deployment_sid }}' folders structure is prepared
+- name: Ensure SAProuter folders structure is prepared - {{ saprouter_deployment_sid }}
   ansible.builtin.file:
     state: directory
     name: "{{ item }}"

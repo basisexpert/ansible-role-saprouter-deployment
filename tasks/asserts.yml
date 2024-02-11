@@ -1,0 +1,20 @@
+---
+
+- name: Ensure local and remote locations of SAPCAR are mutually exclusive
+  ansible.builtin.assert:
+    that: |
+      ( saprouter_deployment_sapcar_local_dir is not defined ) or
+      ( saprouter_deployment_sapcar_remote_dir is not defined )
+    fail_msg: |
+      Variables saprouter_deployment_sapcar_local_dir and
+      saprouter_deployment_sapcar_remote_dir are mutually exclusive
+
+
+- name: Ensure local and remote locations of SAProuter arvives are mutually exclusive
+  ansible.builtin.assert:
+    that: |
+      ( saprouter_deployment_bundle_local_dir is not defined ) or
+      ( saprouter_deployment_bundle_remote_dir is not defined )
+    fail_msg: |
+      Variables saprouter_deployment_bundle_local_dir and
+      saprouter_deployment_bundle_remote_dir are mutually exclusive
