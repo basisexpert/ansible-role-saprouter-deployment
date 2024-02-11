@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/env bash
+
+source ~/.sapenv.sh
 
 __SAPROUTER_OPT="$SAPROUTER_OPT \
     -r \
@@ -8,5 +10,5 @@ __SAPROUTER_OPT="$SAPROUTER_OPT \
     -T {{ saprouter_deployment_instance_work_dir }}/dev_rout -D"
 
 [[ -n "${MYSNCDN}" ]] && \
-    ( cd {{ saprouter_deployment_instance_work_dir }} && {{ saprouter_deployment_global_exe_dir }}/saprouter $__SAPROUTER_OPT -K "p:${MYSNCDN}" & ) || \
-    ( cd {{ saprouter_deployment_instance_work_dir }} && {{ saprouter_deployment_global_exe_dir }}/saprouter $__SAPROUTER_OPT & )
+    ( cd {{ saprouter_deployment_instance_work_dir }} && {{ saprouter_deployment_global_exe_dir }}/saprouter $__SAPROUTER_OPT -K "p:${MYSNCDN}" ) || \
+    ( cd {{ saprouter_deployment_instance_work_dir }} && {{ saprouter_deployment_global_exe_dir }}/saprouter $__SAPROUTER_OPT )

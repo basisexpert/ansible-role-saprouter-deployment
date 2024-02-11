@@ -25,7 +25,7 @@ SAProuter's instance deployment parameters
 | saprouter_deployment_sid | | R99 |
 | saprouter_deployment_instance_number | | '99' |
 | saprouter_deployment_instance_name | | "R{{ saprouter_deployment_instance_number }}" |
-| saprouter_deployment_user_name | | "{{ saprouter_deployment_sid | lower }}adm" |
+| saprouter_deployment_user_name | | "{{ saprouter_deployment_sid \| lower }}adm" |
 | saprouter_deployment_user_shell | | /bin/bash |
 | saprouter_deployment_user_uid | | |
 | saprouter_deployment_group_sapsys_gid | | |
@@ -44,3 +44,10 @@ SAProuter SAPROUTTAB template
 | Variable | Description | Default |
 | --- | --- | --- |
 | saprouter_saprouttab_template | | SAPROUTTAB.any.j2 |
+
+SAProuter service parameters
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| saprouter_deployment_service_name | | "SAP{{ saprouter_deployment_sid }}_{{ saprouter_deployment_instance_number }}" |
+| saprouter_deployment_service_template | | saprouter_service.j2 |

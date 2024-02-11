@@ -1,0 +1,10 @@
+---
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart saprouter service
+  ansible.builtin.service:
+    name: "{{ saprouter_deployment_service_name }}"
+    state: restarted

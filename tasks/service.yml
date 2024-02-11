@@ -1,0 +1,25 @@
+---
+
+- name: Ensure SAProuter service is configured
+  when: saprouter_deployment_service_name | d('') | length > 0
+  block:
+
+    - name: Ensure SAProuter service is generated
+      ansible.builtin.template:
+        src: "{{ saprouter_deployment_service_template }}"
+        dest: "/etc/systemd/system/{{ saprouter_deployment_service_name }}.service"
+        owner: root
+        group: root
+        mode: '0644'
+      notify:
+        - Reload systemd daemon
+        - Restart saprouter service
+
+    - name: Ensure systemd daemon reloaded if needed
+      ansible.builtin.meta: flush_handlers
+
+    - name: Ensure SAProuter service service is enabled and started
+      ansible.builtin.service:
+        name: "{{ saprouter_deployment_service_name }}"
+        enabled: true
+        state: started
