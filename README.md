@@ -54,6 +54,14 @@ SAProuter SAPROUTTAB template
 | --- | --- | --- |
 | saprouter_saprouttab_template | | SAPROUTTAB.any.j2 |
 
+SAProuter service parameters
+---
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| saprouter_deployment_service_name | | "SAP{{ saprouter_deployment_sid }}_{{ saprouter_deployment_instance_number }}" |
+| saprouter_deployment_service_template | | saprouter_service.j2 |
+
 Location of original utility SAPCAR
 ---
 

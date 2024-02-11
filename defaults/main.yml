@@ -30,6 +30,9 @@ saprouter_stop_script_template: stopsaprouter.sh.j2
 ## SAProuter SAPROUTTAB template
 saprouter_saprouttab_template: SAPROUTTAB.any.j2
 
+## SAProuter service
+saprouter_deployment_service_template: saprouter_service.j2 
+
 ## Calculated variables
 saprouter_deployment_saprouter_dir: "/usr/sap/{{ saprouter_deployment_sid }}"
 saprouter_deployment_global_dir: "{{ saprouter_deployment_saprouter_dir }}/SYS"
@@ -38,3 +41,4 @@ saprouter_deployment_global_profile_dir: "{{ saprouter_deployment_global_dir }}/
 saprouter_deployment_instance_dir: "{{ saprouter_deployment_saprouter_dir }}/{{ saprouter_deployment_instance_name }}"
 saprouter_deployment_instance_sec_dir: "{{ saprouter_deployment_instance_dir }}/sec"
 saprouter_deployment_instance_work_dir: "{{ saprouter_deployment_instance_dir }}/work"
+saprouter_deployment_service_name: "SAP{{ saprouter_deployment_sid }}_{{ saprouter_deployment_instance_number }}"

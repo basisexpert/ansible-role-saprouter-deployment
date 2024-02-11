@@ -15,7 +15,7 @@
     content: |
       SAPSYSTEMNAME={{ saprouter_deployment_sid }}; export SAPSYSTEMNAME
       SECUDIR={{ saprouter_deployment_instance_sec_dir }}; export SECUDIR
-      SNC_LIB={{ saprouter_deployment_instance_sec_dir }}/libsapcrypto.so; export SNC_LIB
+      SNC_LIB={{ saprouter_deployment_global_exe_dir }}/libsapcrypto.so; export SNC_LIB
       PATH=$PATH:{{ saprouter_deployment_global_exe_dir }}; export PATH
       LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:{{ saprouter_deployment_global_exe_dir }}; export LD_LIBRARY_PATH
       alias cdexe='cd {{ saprouter_deployment_global_exe_dir }}'
