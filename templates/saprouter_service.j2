@@ -1,0 +1,16 @@
+# {{ ansible_managed }}
+[Unit]
+Description=SAProuter {{ saprouter_deployment_sid }} Service
+
+[Service]
+Type=exec
+User={{ saprouter_deployment_user_name }}
+Group=sapsys
+Restart=always
+ExecStart={{ saprouter_deployment_global_exe_dir }}/startsaprouter.sh
+StandardOutput=append:{{ saprouter_deployment_instance_work_dir }}/stdout.log
+StandardError=append:{{ saprouter_deployment_instance_work_dir }}/stderr.log
+
+
+[Install]
+WantedBy=multi-user.target

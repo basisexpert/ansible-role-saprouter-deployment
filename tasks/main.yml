@@ -6,3 +6,4 @@
 - import_tasks: user.yml
 - import_tasks: saprouter.yml
 - import_tasks: saprouttab.yml
+- import_tasks: service.yml
